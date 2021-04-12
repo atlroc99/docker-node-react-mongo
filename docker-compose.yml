@@ -1,0 +1,48 @@
+version: "3.8"
+services: 
+    mongodb:
+        image: 'mongo'
+        volumes: 
+          - mongodb-data:/data/db
+        # environment: usign / hard coding env variables the compose.yml file
+        #   MONGO_INITDB_ROOT_USERNAME: max
+        #   MONGO_INITDB_ROOT_PASSWORD: secret
+        #  referencing the env variables from an external file
+        env_file: 
+          - ./env/mongodb_credentials.env
+    backend:
+        # image: 'goals-be'
+         # docker will use the Dockerfile and build the image
+        build: ./backend
+        ports:
+          - '80:80'
+        volumes: 
+          - node_backend_logs:/app/logs
+          - /app/node_modules
+        env_file: 
+          - ./backend/env/mongodb_cred.env
+        depends_on: 
+          - mongodb
+    frontend:
+        build: ./frontend
+        ports: 
+          - '3000:3000'
+        volumes: 
+          # creating the bind-mount wiht the app source and container src code
+          - ./frontend/src:/app/src 
+          # lets docker know that this service needs an open input connection (for -it interactive mode)
+          # tty -> attachign the interactive terminal
+        stdin_open: true
+        tty: true 
+        depends_on:
+          - backend
+volumes: 
+  mongodb-data:
+  node_backend_logs:
+
+
+  # running docker-compose
+  # in quiet detach mode: docker-compose up -d 
+  # docker-compose down does not remove the volume [stopping and removing all containers]
+  # docker-compose down -v will remove the volume along with the container
+  # 
