@@ -87,7 +87,9 @@ mongoose.connect(
   // 'mongodb://localhost:27017/course-goals',
   // 'mongodb://172.17.0.2:27017/course-goals',
   //  'mongodb://host.docker.internal:27017/course-goals',
-  'mongodb://mongodb:27017/course-goals', {
+  // 'mongodb://mongodb:27017/course-goals', {
+  // 'mongodb://mzaman:secret@my-mongo:27017/course-goals?authSource=admin', {
+  `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@mz-mongo:27017/course-goals?authSource=admin`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 },
@@ -104,11 +106,5 @@ mongoose.connect(
   }
 );
 
-//docker run command for this backend
-//docker run -d -p 80:80 -v node_backend_logs:/app/logs node-backend:latest
-
-// Running with netowrk: goals-net
-
-
-// running mongodb
-// docker run -d --rm --network goals-net --name goals_mongo mongo:latest
+// docker run -d -v logs:/app/logs --network goals-net --name node-backend-app  node-be
+// docker run -d -v logs:/app/logs --network goals-net --name node-be -env_file=./env/mongodb_cred.env node-be
